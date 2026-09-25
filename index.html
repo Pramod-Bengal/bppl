@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Conductor Strip Dimension & Tolerance Inspector</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    
+    <!-- Top Header -->
+    <header class="app-header">
+      <div class="brand-wrapper">
+        <div class="brand-icon">±</div>
+        <div>
+          <h1 class="brand-title">Conductor Strip Dimension & Tolerance Inspector</h1>
+          <p class="brand-subtitle">Workshop & QA Tolerance Verification (Bare & Paper Covered Strip)</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-secondary" id="printBtn" title="Print inspection card">
+          🖨️ Print Sheet
+        </button>
+      </div>
+    </header>
+
+    <!-- Quick Example Presets -->
+    <div class="preset-bar">
+      <span class="preset-label">Standard Presets:</span>
+      <button class="preset-chip active" data-preset="dec2026">
+        📋 Single Strip (14.80 × 4.50 / 0.75 mm)
+      </button>
+      <button class="preset-chip" data-preset="bunching2026">
+        📑 Bunching 2-Strip (12.00 × 2.65 / 0.46 || 0.66, Wax: 0.02)
+      </button>
+      <button class="preset-chip" data-preset="vijipower">
+        📑 Vijipower 3-Strip (11.80 × 1.40 / 0.25 || 0.65)
+      </button>
+      <button class="preset-chip" data-preset="transformer">
+        ⚡ Transformer Strip (8.50 × 2.80 / 0.45 mm)
+      </button>
+      <button class="preset-chip" data-preset="clear">
+        🔄 Clear / Custom
+      </button>
+    </div>
+
+    <!-- Main Side-by-Side Layout -->
+    <main class="main-layout">
+
+      <!-- LEFT COLUMN: Calculator & Digital Display Readout -->
+      <section class="panel">
+        <div class="panel-title">
+          <span>Conductor Specification & Tolerance Readout</span>
+          <span class="panel-title-badge">LIVE CALCULATION</span>
+        </div>
+
+        <!-- Mode Switcher -->
+        <div class="mode-switcher">
+          <button class="mode-btn active" id="modeSingleBtn">Single Strip Conductor</button>
+          <button class="mode-btn" id="modeBunchedBtn">Multi-Strip / Bunched (2+5 PC)</button>
+        </div>
+
+        <!-- Single Strip Inputs -->
+        <div class="input-grid" id="singleInputs">
+          <div class="input-group">
+            <label class="input-label" for="bareW">
+              <span>Bare Width</span>
+              <span class="input-unit">(mm)</span>
+            </label>
+            <input type="number" id="bareW" class="input-field" step="0.01" min="0" value="14.80" placeholder="e.g. 14.80">
+          </div>
+
+          <div class="input-group">
+            <label class="input-label" for="bareT">
+              <span>Bare Thickness</span>
+              <span class="input-unit">(mm)</span>
+            </label>
+            <input type="number" id="bareT" class="input-field" step="0.01" min="0" value="4.50" placeholder="e.g. 4.50">
+          </div>
+
+          <div class="input-group">
+            <label class="input-label" for="insulation">
+              <span>Paper Covering</span>
+              <span class="input-unit">(mm)</span>
+            </label>
+            <input type="number" id="insulation" class="input-field" step="0.01" min="0" value="0.75" placeholder="e.g. 0.75">
+          </div>
+
+          <div class="input-group">
+            <label class="input-label" for="covWNominal">
+              <span>Covered Width (Nom)</span>
+              <span class="input-unit">(mm)</span>
+            </label>
+            <input type="number" id="covWNominal" class="input-field" step="0.01" min="0" value="15.55" placeholder="e.g. 15.55">
+          </div>
+
+          <div class="input-group">
+            <label class="input-label" for="covTNominal">
+              <span>Covered Thick (Nom)</span>
+              <span class="input-unit">(mm)</span>
+            </label>
+            <input type="number" id="covTNominal" class="input-field" step="0.01" min="0" value="5.25" placeholder="e.g. 5.25">
+          </div>
+        </div>
+
+        <!-- Bunched Conductor Inputs (Hidden by default) -->
+        <div class="input-grid" id="bunchedInputs" style="display: none;">
+          <div class="input-group">
+            <label class="input-label" for="bunchedBareW">
+              <span>Bare Width</span>
+              <span class="input-unit">(mm)</span>
+            </label>
+            <input type="number" id="bunchedBareW" class="input-field" step="0.01" min="0" value="11.80" placeholder="11.80">
+          </div>
+
+          <div class="input-group">
+            <label class="input-label" for="bunchedBareT">
+              <span>Bare Thickness</span>
+              <span class="input-unit">(mm)</span>
+            </label>
+            <input type="number" id="bunchedBareT" class="input-field" step="0.01" min="0" value="1.40" placeholder="1.40">
+          </div>
+
+          <div class="input-group">
+            <label class="input-label" for="bunchedSingleIns">
+              <span>Single Strip Paper</span>
+              <span class="input-unit">(mm)</span>
+            </label>
+            <input type="number" id="bunchedSingleIns" class="input-field" step="0.01" min="0" value="0.25" placeholder="0.25">
+          </div>
+
+          <div class="input-group">
+            <label class="input-label" for="bunchedOverallIns">
+              <span>Overall Covering</span>
+              <span class="input-unit">(mm)</span>
+            </label>
+            <input type="number" id="bunchedOverallIns" class="input-field" step="0.01" min="0" value="0.65" placeholder="0.65">
+          </div>
+
+          <div class="input-group">
+            <label class="input-label" for="bunchedStripsThick">
+              <span>Stacked Strips</span>
+              <span class="input-unit">(Qty)</span>
+            </label>
+            <input type="number" id="bunchedStripsThick" class="input-field" step="1" min="1" value="3">
+          </div>
+
+          <div class="input-group">
+            <label class="input-label" for="bunchedWax">
+              <span>Wax Constant</span>
+              <span class="input-unit">(0.02 mm)</span>
+            </label>
+            <input type="number" id="bunchedWax" class="input-field" step="0.005" min="0" value="0.02" title="Wax constant = 0.02 mm per bunching specification">
+          </div>
+
+          <div class="input-group">
+            <label class="input-label" for="bunchedCoveredW">
+              <span>Covered Width (Nom)</span>
+              <span class="input-unit">(mm)</span>
+            </label>
+            <input type="number" id="bunchedCoveredW" class="input-field" step="0.01" min="0" value="12.70">
+          </div>
+
+          <div class="input-group">
+            <label class="input-label" for="bunchedCoveredT">
+              <span>Covered Thick (Nom)</span>
+              <span class="input-unit">(mm)</span>
+            </label>
+            <input type="number" id="bunchedCoveredT" class="input-field" step="0.01" min="0" value="5.60">
+          </div>
+        </div>
+
+        <!-- DIGITAL READOUT DISPLAY CARDS -->
+        <div class="display-section">
+          
+          <!-- 1. Bare Dimensions Card -->
+          <div class="readout-card highlight">
+            <div class="card-header">
+              <div class="card-title">
+                <span>⚡ BARE CONDUCTOR DIMENSIONS</span>
+              </div>
+              <span class="card-badge badge-bare">BARE SPEC</span>
+            </div>
+
+            <div class="values-grid">
+              <!-- Bare Width -->
+              <div class="value-box">
+                <div class="value-box-title">
+                  <span>WIDTH LIMITS</span>
+                  <span class="nominal-val" id="dispBareWNom">14.80 mm</span>
+                </div>
+                <div class="limits-row">
+                  <div class="limit-item limit-pos">
+                    <span class="limit-tag">(+ve) MAXIMUM</span>
+                    <span class="limit-number" id="dispBareWPos">14.90</span>
+                    <span class="limit-sub" id="dispBareWTol">Tol: ±0.10 mm</span>
+                  </div>
+                  <div class="limit-item limit-neg">
+                    <span class="limit-tag">(-ve) MINIMUM</span>
+                    <span class="limit-number" id="dispBareWNeg">14.70</span>
+                    <span class="limit-sub">Lower Limit</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Bare Thickness -->
+              <div class="value-box">
+                <div class="value-box-title">
+                  <span>THICKNESS LIMITS</span>
+                  <span class="nominal-val" id="dispBareTNom">4.50 mm</span>
+                </div>
+                <div class="limits-row">
+                  <div class="limit-item limit-pos">
+                    <span class="limit-tag">(+ve) MAXIMUM</span>
+                    <span class="limit-number" id="dispBareTPos">4.55</span>
+                    <span class="limit-sub" id="dispBareTTol">Tol: ±0.05 mm</span>
+                  </div>
+                  <div class="limit-item limit-neg">
+                    <span class="limit-tag">(-ve) MINIMUM</span>
+                    <span class="limit-number" id="dispBareTNeg">4.45</span>
+                    <span class="limit-sub">Lower Limit</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bunched intermediate single strip (shown only in bunched mode) -->
+          <div class="readout-card" id="bunchedStripCard" style="display: none;">
+            <div class="card-header">
+              <div class="card-title">
+                <span>📎 SINGLE STRIP WITH INTERMEDIATE INSULATION</span>
+              </div>
+              <span class="card-badge badge-bare">SUB-ASSEMBLY</span>
+            </div>
+            <div class="values-grid">
+              <!-- Single Strip Width -->
+              <div class="value-box">
+                <div class="value-box-title">
+                  <span>SINGLE STRIP WIDTH</span>
+                  <span class="nominal-val" id="dispSingleStripWNom">12.46 mm</span>
+                </div>
+                <div class="limits-row">
+                  <div class="limit-item limit-pos">
+                    <span class="limit-tag">(+ve) MAXIMUM</span>
+                    <span class="limit-number" id="dispSingleStripWPos">12.53</span>
+                    <span class="limit-sub">Bare Tol Added</span>
+                  </div>
+                  <div class="limit-item limit-neg">
+                    <span class="limit-tag">(-ve) MINIMUM</span>
+                    <span class="limit-number" id="dispSingleStripWNeg">12.34</span>
+                    <span class="limit-sub">Paper Var Deducted</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Single Strip Thickness -->
+              <div class="value-box">
+                <div class="value-box-title">
+                  <span>SINGLE STRIP THICKNESS</span>
+                  <span class="nominal-val" id="dispSingleStripTNom">3.11 mm</span>
+                </div>
+                <div class="limits-row">
+                  <div class="limit-item limit-pos">
+                    <span class="limit-tag">(+ve) MAXIMUM</span>
+                    <span class="limit-number" id="dispSingleStripTPos">3.14</span>
+                    <span class="limit-sub">Bare Tol Added</span>
+                  </div>
+                  <div class="limit-item limit-neg">
+                    <span class="limit-tag">(-ve) MINIMUM</span>
+                    <span class="limit-number" id="dispSingleStripTNeg">3.034</span>
+                    <span class="limit-sub">Paper Var Deducted</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. Covered Dimensions Card -->
+          <div class="readout-card highlight">
+            <div class="card-header">
+              <div class="card-title">
+                <span>📦 COVERED CONDUCTOR DIMENSIONS</span>
+              </div>
+              <span class="card-badge badge-covered">PAPER COVERED</span>
+            </div>
+
+            <!-- Single Strip Paper & Overall Covering Summary inside Covered card -->
+            <div class="covered-insulation-box" id="coveredInsulationSummary" style="margin-bottom: 14px; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 6px; padding: 10px 14px; font-size: 0.825rem; display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; align-items: center;">
+              <!-- Dynamically populated in app.js -->
+            </div>
+
+            <div class="values-grid">
+              <!-- Covered Width -->
+              <div class="value-box">
+                <div class="value-box-title">
+                  <span>COVERED WIDTH</span>
+                  <span class="nominal-val" id="dispCovWNom">15.55 mm</span>
+                </div>
+                <div class="limits-row">
+                  <div class="limit-item limit-pos">
+                    <span class="limit-tag">(+ve) MAXIMUM</span>
+                    <span class="limit-number" id="dispCovWPos">15.65</span>
+                    <span class="limit-sub">(+0% paper)</span>
+                  </div>
+                  <div class="limit-item limit-neg">
+                    <span class="limit-tag">(-ve) MINIMUM</span>
+                    <span class="limit-number" id="dispCovWNeg">15.39</span>
+                    <span class="limit-sub" id="dispCovWSub">(-ve deduct: -0.156 mm)</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Covered Thickness -->
+              <div class="value-box">
+                <div class="value-box-title">
+                  <span>COVERED THICKNESS</span>
+                  <span class="nominal-val" id="dispCovTNom">5.25 mm</span>
+                </div>
+                <div class="limits-row">
+                  <div class="limit-item limit-pos">
+                    <span class="limit-tag">(+ve) MAXIMUM</span>
+                    <span class="limit-number" id="dispCovTPos">5.30</span>
+                    <span class="limit-sub">(+0% paper)</span>
+                  </div>
+                  <div class="limit-item limit-neg">
+                    <span class="limit-tag">(-ve) MINIMUM</span>
+                    <span class="limit-number" id="dispCovTNeg">5.14</span>
+                    <span class="limit-sub" id="dispCovTSub">(-ve deduct: -0.106 mm)</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. Corner Radius Display Card -->
+          <div class="readout-card">
+            <div class="card-header">
+              <div class="card-title">
+                <span>🔄 CORNER RADIUS (R) SPECIFICATION</span>
+              </div>
+              <span class="card-badge badge-radius">EDGE PROFILE</span>
+            </div>
+            <div class="radius-display-row">
+              <div class="radius-metric">
+                <div class="radius-metric-label">Nominal Corner Radius</div>
+                <div class="radius-metric-value" id="dispCRNom">1.00 mm</div>
+              </div>
+              <div class="radius-metric">
+                <div class="radius-metric-label">Radius Tolerance</div>
+                <div class="radius-metric-value" id="dispCRTol">±25%</div>
+              </div>
+              <div class="radius-metric">
+                <div class="radius-metric-label">Permissible Radius Range</div>
+                <div class="radius-metric-value" id="dispCRRange">0.750 to 1.250 mm</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Cross-Section SVG Diagram -->
+        <div class="diagram-container">
+          <div class="diagram-header">
+            <span class="diagram-title">Cross-Section Profile Diagram</span>
+            <span class="input-unit">Scaled Visual Representation</span>
+          </div>
+          <div class="diagram-svg-wrapper" id="diagramSvg">
+            <!-- SVG will be rendered here dynamically -->
+          </div>
+        </div>
+
+        <!-- Step-by-Step Mathematical Breakdown -->
+        <div class="step-breakdown">
+          <div class="breakdown-header">
+            <div class="breakdown-title">
+              <span>📐 Step-by-Step Calculation Breakdown (Notebook Formulae)</span>
+            </div>
+          </div>
+          <div class="breakdown-content" id="formulaLines">
+            <!-- Dynamic calculation formulas -->
+          </div>
+        </div>
+
+        <!-- Shop Floor Quality Check (Go / No-Go Gauge) -->
+        <div class="qc-box">
+          <div class="qc-header">
+            <span>🔬 Inspection Caliper / Micrometer Verification</span>
+            <select id="qcCheckTarget" style="background:var(--bg-surface); color:#fff; border:1px solid var(--border-color); padding:4px 8px; border-radius:4px; font-size:0.8rem;">
+              <option value="bare">Check Against Bare Limits</option>
+              <option value="covered" selected>Check Against Covered Limits</option>
+            </select>
+          </div>
+          <div class="qc-grid">
+            <div class="input-group">
+              <label class="input-label" for="qcMeasuredW">
+                <span>Measured Width</span>
+                <span class="input-unit">(mm)</span>
+              </label>
+              <input type="number" id="qcMeasuredW" class="input-field" step="0.001" placeholder="Actual Width">
+            </div>
+            <div class="input-group">
+              <label class="input-label" for="qcMeasuredT">
+                <span>Measured Thick</span>
+                <span class="input-unit">(mm)</span>
+              </label>
+              <input type="number" id="qcMeasuredT" class="input-field" step="0.001" placeholder="Actual Thick">
+            </div>
+          </div>
+          <div class="qc-result-badge qc-neutral" id="qcResultBadge">
+            Enter measured dimensions from micrometer/caliper above to verify
+          </div>
+        </div>
+
+      </section>
+
+      <!-- RIGHT COLUMN: "Display Tolerance Page Near Display" (Reference Standards) -->
+      <aside class="panel tolerance-panel">
+        <div class="panel-title">
+          <span>Tolerance Standard Tables</span>
+          <span class="panel-title-badge">REFERENCE SHEET</span>
+        </div>
+
+        <!-- Table 1: Width & Thickness Tolerance -->
+        <div class="table-card" id="refTableWidth">
+          <div class="table-title">
+            <span>1. WIDTH &amp; THICKNESS TOLERANCE</span>
+            <span class="input-unit">(Bare Conductor)</span>
+          </div>
+          <div class="table-responsive-wrapper">
+            <table class="custom-table" id="tableWidthThickness">
+              <thead>
+                <tr>
+                  <th>Above (mm)</th>
+                  <th>Upto &amp; Incl (mm)</th>
+                  <th>Tolerance (± mm)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr id="wt-row-1">
+                  <td>0</td>
+                  <td>3.15</td>
+                  <td>± 0.03</td>
+                </tr>
+                <tr id="wt-row-2">
+                  <td>3.15</td>
+                  <td>6.30</td>
+                  <td>± 0.05</td>
+                </tr>
+                <tr id="wt-row-3">
+                  <td>6.30</td>
+                  <td>12.50</td>
+                  <td>± 0.07</td>
+                </tr>
+                <tr id="wt-row-4">
+                  <td>12.50</td>
+                  <td>Above</td>
+                  <td>± 0.10</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Table 2: Paper Covering Increase Tolerance -->
+        <div class="table-card" id="refTablePaper">
+          <div class="table-title">
+            <span>2. PAPER COVERING DIMENSION INCREASE</span>
+            <span class="input-unit">(Insulation Tolerance)</span>
+          </div>
+          <div class="table-responsive-wrapper">
+            <table class="custom-table" id="tablePaperCovering">
+              <thead>
+                <tr>
+                  <th>Over (mm)</th>
+                  <th>Upto &amp; Incl (mm)</th>
+                  <th>Tolerance</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr id="pc-row-1">
+                  <td>—</td>
+                  <td>0.50</td>
+                  <td>+0% , -10%</td>
+                </tr>
+                <tr id="pc-row-2">
+                  <td>0.50</td>
+                  <td>1.25</td>
+                  <td>+0% , -7.5%</td>
+                </tr>
+                <tr id="pc-row-3">
+                  <td>1.25</td>
+                  <td>—</td>
+                  <td>+0% , -5%</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Table 3: Corner Radius Table -->
+        <div class="table-card" id="refTableRadius">
+          <div class="table-title">
+            <span>3. CORNER RADIUS SPECIFICATION</span>
+            <span class="input-unit">(Bare Thickness)</span>
+          </div>
+          <div class="table-responsive-wrapper">
+            <table class="custom-table" id="tableCornerRadius">
+              <thead>
+                <tr>
+                  <th>Thickness (mm)</th>
+                  <th>Corner Radius</th>
+                  <th>Tolerance</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr id="cr-row-1">
+                  <td>Upto 1.0</td>
+                  <td>Semicircle</td>
+                  <td>± 25%</td>
+                </tr>
+                <tr id="cr-row-2">
+                  <td>1.0 — 1.60</td>
+                  <td>0.50 mm</td>
+                  <td>± 25%</td>
+                </tr>
+                <tr id="cr-row-3">
+                  <td>1.60 — 2.24</td>
+                  <td>0.65 mm</td>
+                  <td>± 25%</td>
+                </tr>
+                <tr id="cr-row-4">
+                  <td>2.24 — 3.55</td>
+                  <td>0.80 mm</td>
+                  <td>± 25%</td>
+                </tr>
+                <tr id="cr-row-5">
+                  <td>3.55 Above</td>
+                  <td>1.00 mm</td>
+                  <td>± 25%</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Original Workshop Notebook Scans Gallery -->
+        <div class="table-card">
+          <div class="table-title">
+            <span>4. ORIGINAL NOTEBOOK REFERENCE SHEETS</span>
+            <span class="input-unit">Click to zoom</span>
+          </div>
+          <div class="notebook-gallery" style="grid-template-columns: repeat(5, 1fr);">
+            <div class="thumb-item" data-src="assets/media_1790350728015.jpg" data-title="Notebook 5: Bunching Conductor with Wax=0.02 (12.00 x 2.65 / 0.46 || 0.66 4+5PC)">
+              <img src="assets/media_1790350728015.jpg" alt="Bunching Notebook with Wax">
+              <span class="thumb-caption">Bunching (Wax)</span>
+            </div>
+            <div class="thumb-item" data-src="assets/media_1789382620919.jpg" data-title="Notebook 1: Single Strip Example (14.80 x 4.50 / 0.75)">
+              <img src="assets/media_1789382620919.jpg" alt="Single Strip Example">
+              <span class="thumb-caption">Single Strip</span>
+            </div>
+            <div class="thumb-item" data-src="assets/media_1789382620905.jpg" data-title="Notebook 2: Vijipower Bunched Conductor (11.80 x 1.40 / 0.25 || 0.65)">
+              <img src="assets/media_1789382620905.jpg" alt="Vijipower Page 1">
+              <span class="thumb-caption">Vijipower P1</span>
+            </div>
+            <div class="thumb-item" data-src="assets/media_1789382620910.jpg" data-title="Notebook 3: Vijipower Thickness Calculation (5.60 mm Stacked)">
+              <img src="assets/media_1789382620910.jpg" alt="Vijipower Page 2">
+              <span class="thumb-caption">Vijipower P2</span>
+            </div>
+            <div class="thumb-item" data-src="assets/media_1789382620924.jpg" data-title="Notebook 4: Master Tolerance & Corner Radius Table">
+              <img src="assets/media_1789382620924.jpg" alt="Tolerance Table">
+              <span class="thumb-caption">Tolerance Table</span>
+            </div>
+          </div>
+        </div>
+
+      </aside>
+
+    </main>
+  </div>
+
+  <!-- Zoom Modal for Notebook Photos -->
+  <div class="modal-overlay" id="imageModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modalTitle" style="color: #fff; font-size: 1rem;">Reference Document</h3>
+        <button class="close-btn" id="modalClose">&times;</button>
+      </div>
+      <div class="modal-body">
+        <img id="modalImage" src="" alt="Notebook Zoom Preview">
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="tolerances.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

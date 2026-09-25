@@ -1,0 +1,19 @@
+{
+  "name": "conductor-tolerance-inspector",
+  "version": "1.0.0",
+  "description": "Industrial Conductor Strip Dimension & Tolerance Inspector with Live Reference Tables",
+  "main": "index.html",
+  "scripts": {
+    "test": "node tests.js",
+    "start": "npx serve ."
+  },
+  "keywords": [
+    "conductor",
+    "copper-strip",
+    "paper-insulated",
+    "tolerance-calculator",
+    "quality-control"
+  ],
+  "author": "",
+  "license": "ISC"
+}

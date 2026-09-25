@@ -1,0 +1,3 @@
+@echo off
+echo Starting Conductor Tolerance Inspector Webpage...
+start "" "%~dp0index.html"
